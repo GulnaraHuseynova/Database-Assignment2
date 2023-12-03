@@ -1,0 +1,33 @@
+CREATE TABLE Authors(
+	AuthorId int primary key not null,
+	AuthorName Varchar(255) not null,
+	AuthorBio TEXT
+);
+
+Create table Customers(
+	CustomerId int Primary key not null,
+	FirstName Varchar(255) not null,
+	LastName varchar(255) not null,
+	Email varchar(255) not null
+);
+
+create table Books(
+	BookId int primary key not null,
+	Title Varchar(255) not null,
+	AuthorId int not null, 
+	StockQuality int not null, 
+	Price  decimal(10, 2) not null,
+	Foreign key (AuthorId) references Authors(AuthorId)
+);
+
+
+
+create table Orders(
+	OrderId int primary key	not null,
+	CustomerId int not null,
+	OrderDate Date not null,
+	Foreign key (CustomerId) references Customers(CustomerId)
+);
+
+
+select * from Orders;
