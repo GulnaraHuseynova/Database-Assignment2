@@ -1,6 +1,7 @@
 import java.sql.*;
 
 public class Metadata {
+    // Database connection details
     private static final String JDBC_URL = "jdbc:mysql://your-database-url:3306/your-database-name";
     private static final String USER = "your-username";
     private static final String PASSWORD = "your-password";
@@ -12,7 +13,7 @@ public class Metadata {
 
             // Step 2: Open a connection
             System.out.println("Connecting to database...");
-            try (Connection connection = DriverManager.getConnection('')) {
+            try (Connection connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD)) {
 
                 // Step 3: Access metadata
                 DatabaseMetaData metaData = connection.getMetaData();
@@ -36,6 +37,7 @@ public class Metadata {
         }
     }
 
+    // Method to display table names and structures
     private static void displayTableNamesAndStructures(DatabaseMetaData metaData) throws SQLException {
         System.out.println("Table Names and Structures:");
         ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
@@ -57,6 +59,7 @@ public class Metadata {
         tables.close();
     }
 
+    // Method to display details on columns of tables
     private static void displayColumnDetails(DatabaseMetaData metaData) throws SQLException {
         System.out.println("Column Details:");
         ResultSet columns = metaData.getColumns(null, null, null, "%");
@@ -76,6 +79,7 @@ public class Metadata {
         columns.close();
     }
 
+    // Method to display information on primary and foreign keys
     private static void displayKeysInformation(DatabaseMetaData metaData) throws SQLException {
         System.out.println("Keys Information:");
         ResultSet primaryKeys = metaData.getPrimaryKeys(null, null, null);

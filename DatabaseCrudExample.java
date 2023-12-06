@@ -1,20 +1,19 @@
-import java.postgresql.*;
-
+import java.sql.*;
 
 public class DatabaseCrudExample {
-    private static final String JDBC_URL ="";
-    private static final String USER ="Gulnara Huseynova";
-    private static final String PASSWORD ="";
+    private static final String JDBC_URL = "jdbc:postgresql://your-database-url";
+    private static final String USER = "your-username";
+    private static final String PASSWORD = "your-password";
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             Class.forName("org.postgresql.Driver");
 
-            System.out.println("Connecting to database...");
+            System.out.println("Connecting to the database...");
             try (Connection connection = DriverManager.getConnection('')) {
-                System.out.println("Inserting new book...");
+                System.out.println("Inserting a new book...");
                 int newAuthorId = 1;
-                retriveAllBooks(connection);
+                retrieveAllBooks(connection);
                 insertBook(connection, "New BookTitle", newAuthorId, 50, 19.99);
             }
             System.out.println("Connection is closed...");
@@ -23,69 +22,49 @@ public class DatabaseCrudExample {
         }
     }
 
-        private static void retriveAllBooks(Conncetion connection) throws SQLException{
-            String retriveQuery = "Select b.BoolId, b.Title, b.StockQuality, b.Price,  a.AuthorName, o.OrderId"+
-            "FROM BOOKS b"+
-            "JOIN Authors a ON b.AuthorId = a.AuthorId" +
-            "LEFT JOIN Orders o ON b.BookId = o.BookId";
-            try(PreparedStatement prepareStatement = connection.prepareStatement(retriveQuery);
-                ResultSet resultSet = prepareStatement.executeQuery()){
-                    while(resultSet.next()){
-                        int bookId = resultSet.getInt("BookId");
-                        String bookTitle = resultSet.getString("Title");
-                        int stockQuality = resultSet.getInt("StockQuality");
-                        double price = resultSet.getDouble("Price");
-                        String authorName = resultSet.getString("AuthorName");
-                        int orderId = resultSet.getInt("OrderId");
+    private static void retrieveAllBooks(Connection connection) {
+        String retrieveQuery = "SELECT b.BookId, b.Title, b.StockQuality, b.Price, a.AuthorName, o.OrderId " +
+                "FROM Books b " +
+                "JOIN Authors a ON b.AuthorId = a.AuthorId " +
+                "LEFT JOIN Orders o ON b.BookId = o.BookId";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(retrieveQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                int bookId = resultSet.getInt("BookId");
+                String bookTitle = resultSet.getString("Title");
+                int stockQuality = resultSet.getInt("StockQuality");
+                double price = resultSet.getDouble("Price");
+                String authorName = resultSet.getString("AuthorName");
+                int orderId = resultSet.getInt("OrderId");
 
+                System.out.println("Book ID: " + bookId);
+                System.out.println("Title: " + bookTitle);
+                System.out.println("Stock Quality: " + stockQuality);
+                System.out.println("Price: " + price);
+                System.out.println("Author Name: " + authorName);
+                System.out.println("Order Id: " + (orderId == 0 ? "Not ordered" : orderId));
 
-                        System.out.println("Book ID: "+bookId);
-                        System.out.println("Title: "+ bookTitle);
-                        System.out.println("Stock Quality: "+stockQuality);
-                        System.out.println("Price: "+price);
-                        System.out.println("Author Name: "+authorName);
-                        System.out.println("Order Id: "+ (orderId)==0 ? "Not ordered" : orderId);
-
-                        System.out.println("------------------------------------------");
-
-                    }
-            }catch(SQLException e) {
-                 e.printStackTrace();
-            }finally{
-                            try {
-                    if (resultSet != null) {
-                        resultSet.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                System.out.println("------------------------------------------");
             }
-        }
-
-    private static void insertBook(Conncetion connection, String title, int authorId, int StockQuality, double price)
-        throws SQLException{
-
-        String insertQuery = "INSERT INTO Books (Title, AuthorId, StockQuality, Price) values (?, ?, ?, ?)";
-        try(PreparedStatement preparedStatement = connection.preparedStatement(insertQuery)){
-            preparedStatement.setString(1, title);
-            preparedStatement.setInt(2, authorId);
-            preparedStatement.setInt(3, StockQuality);
-            preparedStatement.setDouble(4, price);
-
-            int rowsAffected  = preparedStatement.executeUpdate();
-            System.out.println(rowsAffected+" rows inserted.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
+    private static void insertBook(Connection connection, String title, int authorId, int stockQuality, double price) {
+        String insertQuery = "INSERT INTO Books (Title, AuthorId, StockQuality, Price) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+            preparedStatement.setString(1, title);
+            preparedStatement.setInt(2, authorId);
+            preparedStatement.setInt(3, stockQuality);
+            preparedStatement.setDouble(4, price);
 
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " rows inserted.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void updateBook(Connection connection, int bookId, String title, int stockQuality, double price)
     throws SQLException{
