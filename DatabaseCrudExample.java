@@ -1,4 +1,5 @@
-import java.sql.*;
+import java.postgresql.*;
+
 
 public class DatabaseCrudExample {
     private static final String JDBC_URL ="";
@@ -10,7 +11,7 @@ public class DatabaseCrudExample {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             System.out.println("Connecting to database...");
-            try(Connection connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD)){
+            try(Connection connection = DriverManager.getConnection(''){
                 System.out.println("Inserting new book...");
                 int newAuthorId = 1;
                 retriveAllBooks(connection);
