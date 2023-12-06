@@ -6,33 +6,30 @@ public class DatabaseCrudExample {
     private static final String USER ="Gulnara Huseynova";
     private static final String PASSWORD ="";
 
-    public static void main(String args[]){
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
+    public static void main(String args[]) {
+        try {
+            Class.forName("org.postgresql.Driver");
 
             System.out.println("Connecting to database...");
-            try(Connection connection = DriverManager.getConnection(''){
+            try (Connection connection = DriverManager.getConnection('')) {
                 System.out.println("Inserting new book...");
                 int newAuthorId = 1;
                 retriveAllBooks(connection);
                 insertBook(connection, "New BookTitle", newAuthorId, 50, 19.99);
-                
-
             }
             System.out.println("Connection is closed...");
-        } catch (ClassNotFoundException  SQLException e){
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
-
 
         private static void retriveAllBooks(Conncetion connection) throws SQLException{
             String retriveQuery = "Select b.BoolId, b.Title, b.StockQuality, b.Price,  a.AuthorName, o.OrderId"+
             "FROM BOOKS b"+
             "JOIN Authors a ON b.AuthorId = a.AuthorId" +
             "LEFT JOIN Orders o ON b.BookId = o.BookId";
-            try(PreparedStatement preparedStatement = connection.preparedStatement(retriveQuery);
-                ResultSet resultSet = preparedStatement.executeQuery()){
+            try(PreparedStatement prepareStatement = connection.prepareStatement(retriveQuery);
+                ResultSet resultSet = prepareStatement.executeQuery()){
                     while(resultSet.next()){
                         int bookId = resultSet.getInt("BookId");
                         String bookTitle = resultSet.getString("Title");
@@ -52,6 +49,24 @@ public class DatabaseCrudExample {
                         System.out.println("------------------------------------------");
 
                     }
+            }catch(SQLException e) {
+                 e.printStackTrace();
+            }finally{
+                            try {
+                    if (resultSet != null) {
+                        resultSet.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (preparedStatement != null) {
+                        preparedStatement.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
