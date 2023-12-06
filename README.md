@@ -1,6 +1,10 @@
 # Database-Assignment2
 Database/Assignment2
 
+
+Video explanation: https://youtu.be/XiWet833Rxk
+
+
 Overview:
 This Java application is a simple inventory management system that interacts with a PostgreSQL database. It allows users to check stock availability, place orders, and updates book stock accordingly.
 
